@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'my_app',
 ]
 
 MIDDLEWARE = [ #software intermediario que fornece alguma funcionalidade
@@ -89,6 +90,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '3306',
     }
+
 }
 
 
