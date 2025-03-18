@@ -1,9 +1,7 @@
-from random import choices
-
 from django.core.validators import MinValueValidator, MaxValueValidator
 from .base_model import BaseModel
 from django.db import models
-from my_app.enumerations import Status
+from ..enumerations import Status
 
 class Example(BaseModel):
     description = models.CharField(
@@ -47,9 +45,9 @@ class Example(BaseModel):
     )
 
     def __str__(self):
-        return f"{self.description} ({self.status}-{self.get_status_display()})"
+        return f"{self.description} ({self.status}-{self.get_status_display()})" #campo do tipo charfield com choices, libera o metodo get_status_display. mOstra o que está nos parenteses, na classe Status
 
-    class Neta:
+    class Meta:
         verbose_name = "Exemplo"
         verbose_name_plural = "Exemplos"
         ordering = ("status", "-description",)
