@@ -1,3 +1,4 @@
+from aula.models.magazine import Magazine
 from .base_model import BaseModel
 from django.db import models
 from .reporter import Reporter
@@ -13,7 +14,11 @@ class Article(BaseModel):
         help_text="Escreva aqui a data de publicação",
         verbose_name="Data publicação:",
     )
-    reporter = models.ForeignKey(Reporter, models.CASCADE)
+    reporter = models.ForeignKey(Reporter, models.RESTRICT)
+    magazines = models.ManyToManyField(
+        Magazine, null=True, blank=True, through="Publication", through_fields=("article", "reporter")
+    )
+    
 
     def __str__(self):
-        return self.title
+        return f"{self.title} by {self.reporter.name if self.reporter is not None else 'Anonimo' }
