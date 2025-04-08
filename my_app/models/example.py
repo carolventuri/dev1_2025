@@ -1,9 +1,17 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 from .base_model import BaseModel
 from django.db import models
 from ..enumerations import Status
+from ..validators.cod import CodValidator
+from ..validators.funcoes import validate_par
+from django.core.exceptions import ValidationError
 
 class Example(BaseModel):
+    nome = models.CharField(max_length=100, default=None)
+    cod = models.CharField(max_length=10,
+                           validators=[MinLengthValidator(10),
+                                       CodValidator("444444444"), validate_par],
+                           blank=True)
     description = models.CharField(
         max_length=100, null=False, blank=False,
         help_text="Descrição para um exemplo.",
@@ -51,3 +59,30 @@ class Example(BaseModel):
         verbose_name = "Exemplo"
         verbose_name_plural = "Exemplos"
         ordering = ("status", "-description",)
+        
+        
+    def clean(self): #para validacoes personalizadas SOMENTE PARA MODELS --- o fullclean serve para VIEWS e TEMPLATES
+        if not isinstance(str(self.nome), str):
+            raise ValidationError({"nome": "Nome informado é do tipo errado"}, code="error001")
+        elif self.nome == "Teste":
+            raise ValidationError(
+                {"nome": 'Não é possível salvar testes!'},
+                code="error002"
+            )
+        elif self.cod == "1111111111" and self.nome == "IFRS Restinga":
+            raise ValidationError(
+                {"nome": 'Combinação de nome e código errada!', "cod": 'Combinação de nome e código errada!'},
+                code="error0101"
+            )
+            
+        
+    def save(self, *args, **kwargs):
+        if self.cod is None or self.cod == '':
+            letters = string.ascii_letters + string.digits
+            self.cod = ''.join(random.choice(letters) for i in range(10))
+        super().save(*args,**kwargs)
+        
+        
+        #vou reutilizar? - uso classe
+        #se preciso usar dois campos para validar, uso o método clean - validador específico
+        #se não vou reutilizar, podemos usar funções

@@ -1,6 +1,5 @@
 from .base_model import BaseModel
 from django.db import models
-from ..models import Article
 
 class Magazine(BaseModel):
     name = models.CharField(
@@ -13,8 +12,6 @@ class Magazine(BaseModel):
         help_text="Escreva aqui o número da edição",
         verbose_name="Edição:",
     )
-
-    article = models.ManyToManyField(Article)
 
     def __str__(self):
         return self.name
